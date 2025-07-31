@@ -17,7 +17,6 @@ import {
   PenOffIcon,
   Plus,
   Settings2Icon,
-  Waypoints,
   Wrench,
   WrenchIcon,
   X,
@@ -59,8 +58,7 @@ import { Switch } from "ui/switch";
 import { useShallow } from "zustand/shallow";
 import { useMcpList } from "@/hooks/queries/use-mcp-list";
 import { Avatar, AvatarFallback, AvatarImage } from "ui/avatar";
-import { WorkflowSummary } from "app-types/workflow";
-import { WorkflowGreeting } from "./workflow/workflow-greeting";
+
 import { GlobalIcon } from "ui/global-icon";
 import { AppDefaultToolkit } from "lib/ai/tools";
 import { ChatMention } from "app-types/chat";
@@ -74,7 +72,6 @@ interface ToolSelectDropdownProps {
   side?: "left" | "right" | "top" | "bottom";
   disabled?: boolean;
   mentions?: ChatMention[];
-  onSelectWorkflow?: (workflow: WorkflowSummary) => void;
 }
 
 const calculateToolCount = (
@@ -91,7 +88,6 @@ const calculateToolCount = (
 export function ToolSelectDropdown({
   align,
   side,
-  onSelectWorkflow,
   mentions,
 }: ToolSelectDropdownProps) {
   const [toolChoice, allowedAppDefaultToolkit, allowedMcpServers, mcpList] =
@@ -193,10 +189,7 @@ export function ToolSelectDropdown({
         <div className="py-1 ">
           <DropdownMenuSeparator />
         </div>
-        <WorkflowToolSelector onSelectWorkflow={onSelectWorkflow} />
-        <div className="py-1">
-          <DropdownMenuSeparator />
-        </div>
+
         <div className="py-2">
           <ToolPresets />
           <div className="py-1">
@@ -377,89 +370,6 @@ function ToolPresets() {
           </DropdownMenuSubContent>
         </DropdownMenuPortal>
       </DropdownMenuSub>
-    </DropdownMenuGroup>
-  );
-}
-
-function WorkflowToolSelector({
-  onSelectWorkflow,
-}: {
-  onSelectWorkflow?: (workflow: WorkflowSummary) => void;
-}) {
-  const t = useTranslations();
-  const workflowToolList = appStore((state) => state.workflowToolList);
-  return (
-    <DropdownMenuGroup>
-      <DropdownMenuSub>
-        <DropdownMenuSubTrigger className="text-xs flex items-center gap-2 font-semibold cursor-pointer">
-          <Waypoints className="size-3.5" />
-          {t("Workflow.title")}
-        </DropdownMenuSubTrigger>
-        <DropdownMenuPortal>
-          <DropdownMenuSubContent className="w-80 relative">
-            {workflowToolList.length === 0 ? (
-              <div className="text-sm text-muted-foreground flex flex-col py-6 px-6 gap-4 items-center">
-                <InfoIcon className="size-4" />
-                <p className="whitespace-pre-wrap">{t("Workflow.noTools")}</p>
-
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant={"ghost"} className="relative group">
-                      What is Workflow?
-                      <div className="absolute left-0 -top-1.5 opacity-100 group-hover:opacity-0 transition-opacity duration-300">
-                        <MousePointer2 className="rotate-180 text-blue-500 fill-blue-500 size-3 wiggle" />
-                      </div>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="md:max-w-3xl!">
-                    <DialogTitle className="sr-only">
-                      workflow greeting
-                    </DialogTitle>
-                    <WorkflowGreeting />
-                  </DialogContent>
-                </Dialog>
-              </div>
-            ) : (
-              workflowToolList.map((workflow) => (
-                <DropdownMenuItem
-                  key={workflow.id}
-                  className="cursor-pointer"
-                  onClick={() => onSelectWorkflow?.(workflow)}
-                >
-                  {workflow.icon && workflow.icon.type === "emoji" ? (
-                    <div
-                      style={{
-                        backgroundColor: workflow.icon?.style?.backgroundColor,
-                      }}
-                      className="p-1 rounded flex items-center justify-center ring ring-background border"
-                    >
-                      <Avatar className="size-3">
-                        <AvatarImage src={workflow.icon?.value} />
-                        <AvatarFallback>
-                          {workflow.name.slice(0, 1)}
-                        </AvatarFallback>
-                      </Avatar>
-                    </div>
-                  ) : null}
-                  <span className="truncate min-w-0">{workflow.name}</span>
-                  <div className="flex items-center gap-2 ml-auto text-xs">
-                    <span className="text-muted-foreground">by</span>
-                    <span className="">{workflow.userName}</span>
-                    <Avatar className="size-3 ring rounded-full">
-                      <AvatarImage src={workflow.userAvatar} />
-                      <AvatarFallback>
-                        {workflow.userName.slice(0, 1)}
-                      </AvatarFallback>
-                    </Avatar>
-                  </div>
-                </DropdownMenuItem>
-              ))
-            )}
-          </DropdownMenuSubContent>
-        </DropdownMenuPortal>
-      </DropdownMenuSub>
-      {/* ))
-  )} */}
     </DropdownMenuGroup>
   );
 }

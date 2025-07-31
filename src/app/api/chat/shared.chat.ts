@@ -4,10 +4,7 @@ import {
   Message,
   Tool,
   ToolInvocation,
-  jsonSchema,
   tool as createTool,
-  DataStreamWriter,
-  formatDataStreamPart,
 } from "ai";
 import {
   ChatMention,

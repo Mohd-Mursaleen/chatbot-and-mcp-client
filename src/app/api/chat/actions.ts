@@ -13,7 +13,7 @@ import {
   generateExampleToolSchemaPrompt,
 } from "lib/ai/prompts";
 
-import type { ChatModel, ChatThread, Project } from "app-types/chat";
+import type { ChatModel, ChatThread } from "app-types/chat";
 
 import {
   chatRepository,

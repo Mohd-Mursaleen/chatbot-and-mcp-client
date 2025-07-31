@@ -45,11 +45,11 @@ import { Separator } from "ui/separator";
 
 import { TextShimmer } from "ui/text-shimmer";
 import equal from "lib/equal";
-import { isVercelAIWorkflowTool } from "app-types/workflow";
+
 import { Avatar, AvatarFallback, AvatarImage } from "ui/avatar";
 import { DefaultToolName } from "lib/ai/tools";
 
-import { WorkflowInvocation } from "./tool-invocation/workflow-invocation";
+
 import dynamic from "next/dynamic";
 
 type MessagePart = UIMessage["parts"][number];
@@ -643,23 +643,19 @@ export const ToolMessagePart = memo(
       return null;
     }, [toolName, state, onToolCallDirect, result, args]);
 
-    const isWorkflowTool = useMemo(
-      () => isVercelAIWorkflowTool(result),
-      [result],
-    );
+
 
     const { serverName: mcpServerName, toolName: mcpToolName } = useMemo(() => {
       return extractMCPToolId(toolName);
     }, [toolName]);
 
     const isExpanded = useMemo(() => {
-      return expanded || result === null || isWorkflowTool;
-    }, [expanded, result, isWorkflowTool]);
+      return expanded || result === null;
+    }, [expanded, result]);
 
     const isExecuting = useMemo(() => {
-      if (isWorkflowTool) return result?.status == "running";
       return state !== "result" && (isLast || !!onPoxyToolCall);
-    }, [isWorkflowTool, result, state, isLast, !!onPoxyToolCall]);
+    }, [result, state, isLast, !!onPoxyToolCall]);
 
     return (
       <div className="group w-full">
@@ -676,13 +672,6 @@ export const ToolMessagePart = memo(
                   <Loader className="size-3.5 animate-spin" />
                 ) : isError ? (
                   <TriangleAlert className="size-3.5 text-destructive" />
-                ) : isWorkflowTool ? (
-                  <Avatar className="size-3.5">
-                    <AvatarImage src={result.workflowIcon?.value} />
-                    <AvatarFallback>
-                      {toolName.slice(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
                 ) : (
                   <HammerIcon className="size-3.5" />
                 )}
@@ -753,9 +742,7 @@ export const ToolMessagePart = memo(
                     </div>
                   )}
                 </div>
-                {!result ? null : isWorkflowTool ? (
-                  <WorkflowInvocation result={result} />
-                ) : (
+                {!result ? null : (
                   <div
                     className={cn(
                       "min-w-0 w-full p-4 rounded-lg bg-card px-4 border text-xs mt-2 transition-colors fade-300",

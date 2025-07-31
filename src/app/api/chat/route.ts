@@ -14,7 +14,7 @@ import { customModelProvider, isToolCallUnsupportedModel } from "lib/ai/models";
 
 import { mcpClientsManager } from "lib/ai/mcp/mcp-manager";
 
-import { chatRepository, workflowRepository } from "lib/db/repository";
+import { chatRepository } from "lib/db/repository";
 import globalLogger from "logger";
 import {
   buildMcpServerCustomizationsSystemPrompt,
@@ -39,7 +39,6 @@ import {
   assignToolResult,
   filterMCPToolsByAllowedMCPServers,
   filterMcpServerCustomizations,
-  workflowToVercelAITools,
 } from "./shared.chat";
 import {
   generateTitleFromUserMessageAction,
@@ -47,7 +46,6 @@ import {
 } from "./actions";
 import { getSession } from "auth/server";
 import { colorize } from "consola/utils";
-import { isVercelAIWorkflowTool } from "app-types/workflow";
 import { objectFlow } from "lib/utils";
 import { APP_DEFAULT_TOOL_KIT } from "lib/ai/tools/tool-kit";
 
@@ -146,17 +144,7 @@ export async function POST(request: Request) {
           })
           .orElse({});
 
-        const WORKFLOW_TOOLS = await safe()
-          .map(errorIf(() => !isToolCallAllowed && "Not allowed"))
-          .map(() =>
-            workflowRepository.selectToolByIds(
-              mentions
-                .filter((m) => m.type == "workflow")
-                .map((v) => v.workflowId),
-            ),
-          )
-          .map((v) => workflowToVercelAITools(v, dataStream))
-          .orElse({});
+        const WORKFLOW_TOOLS = {};
 
         const APP_DEFAULT_TOOLS = safe(APP_DEFAULT_TOOL_KIT)
           .map(errorIf(() => !isToolCallAllowed && "Not allowed"))
@@ -238,7 +226,7 @@ export async function POST(request: Request) {
           `tool mode: ${toolChoice}, mentions: ${mentions.length}, allowedMcpTools: ${allowedMcpTools.length}`,
         );
         logger.info(
-          `binding tool count APP_DEFAULT: ${Object.keys(APP_DEFAULT_TOOLS ?? {}).length}, MCP: ${Object.keys(MCP_TOOLS ?? {}).length}, Workflow: ${Object.keys(WORKFLOW_TOOLS ?? {}).length}`,
+          `binding tool count APP_DEFAULT: ${Object.keys(APP_DEFAULT_TOOLS ?? {}).length}, MCP: ${Object.keys(MCP_TOOLS ?? {}).length}`,
         );
         logger.info(`model: ${chatModel?.provider}/${chatModel?.model}`);
 
@@ -286,34 +274,7 @@ export async function POST(request: Request) {
                 threadId: thread!.id,
                 role: assistantMessage.role,
                 id: assistantMessage.id,
-                parts: (assistantMessage.parts as UIMessage["parts"]).map(
-                  (v) => {
-                    if (
-                      v.type == "tool-invocation" &&
-                      v.toolInvocation.state == "result" &&
-                      isVercelAIWorkflowTool(v.toolInvocation.result)
-                    ) {
-                      return {
-                        ...v,
-                        toolInvocation: {
-                          ...v.toolInvocation,
-                          result: {
-                            ...v.toolInvocation.result,
-                            history: v.toolInvocation.result.history.map(
-                              (h) => {
-                                return {
-                                  ...h,
-                                  result: undefined,
-                                };
-                              },
-                            ),
-                          },
-                        },
-                      };
-                    }
-                    return v;
-                  },
-                ),
+                parts: assistantMessage.parts as UIMessage["parts"],
                 attachments: assistantMessage.experimental_attachments,
                 annotations,
               });

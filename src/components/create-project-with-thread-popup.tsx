@@ -32,7 +32,7 @@ import { useCompletion } from "@ai-sdk/react";
 import { handleErrorWithToast } from "ui/shared-toast";
 import { toast } from "sonner";
 import { mutate } from "swr";
-import { insertProjectAction } from "@/app/api/chat/actions";
+// import { insertProjectAction } from "@/app/api/chat/actions"; // Removed as part of project cleanup
 import { useTranslations } from "next-intl";
 
 interface CreateProjectWithThreadPopupProps {
@@ -225,22 +225,24 @@ export function CreateProjectWithThreadPopup({
   };
 
   const handleCreate = async () => {
-    safe(() => setProjectOption({ isLoading: true }))
-      .map(() =>
-        insertProjectAction({
-          name: projectOption.name,
-          instructions: {
-            systemPrompt: projectOption.instructions,
-          },
-        }),
-      )
-      .ifOk(() => setIsOpen(false))
-      .ifOk(() => toast.success(t("Chat.Project.projectCreated")))
-      .ifOk(() => mutate("/api/project/list"))
-      .ifOk(() => onClose?.())
-      .ifOk((project) => router.push(`/project/${project.id}`))
-      .watch(() => setProjectOption({ isLoading: false }))
-      .ifFail(handleErrorWithToast);
+    // Disabled as part of project cleanup - component will be removed in task 5
+    // safe(() => setProjectOption({ isLoading: true }))
+    //   .map(() =>
+    //     insertProjectAction({
+    //       name: projectOption.name,
+    //       instructions: {
+    //         systemPrompt: projectOption.instructions,
+    //       },
+    //     }),
+    //   )
+    //   .ifOk(() => setIsOpen(false))
+    //   .ifOk(() => toast.success(t("Chat.Project.projectCreated")))
+    //   .ifOk(() => mutate("/api/project/list"))
+    //   .ifOk(() => onClose?.())
+    //   .ifOk((project) => router.push(`/project/${project.id}`))
+    //   .watch(() => setProjectOption({ isLoading: false }))
+    //   .ifFail(handleErrorWithToast);
+    console.log("Project creation disabled - functionality removed");
   };
   const steps = useMemo(
     () => [

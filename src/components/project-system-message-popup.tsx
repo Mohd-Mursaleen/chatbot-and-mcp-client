@@ -15,7 +15,7 @@ import { Loader } from "lucide-react";
 import { Textarea } from "ui/textarea";
 import { useEffect, useState } from "react";
 import { safe } from "ts-safe";
-import { updateProjectAction } from "@/app/api/chat/actions";
+// import { updateProjectAction } from "@/app/api/chat/actions"; // Removed as part of project cleanup
 import { toast } from "sonner";
 import { handleErrorWithToast } from "ui/shared-toast";
 import { useTranslations } from "next-intl";
@@ -40,15 +40,19 @@ export function ProjectSystemMessagePopup({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async () => {
-    safe(() => setIsLoading(true))
-      .map(() =>
-        updateProjectAction(projectId, { instructions: { systemPrompt } }),
-      )
-      .watch(() => setIsLoading(false))
-      .ifOk(() => onSave(systemPrompt))
-      .ifOk(() => toast.success(t("Chat.Project.projectInstructionsUpdated")))
-      .ifOk(() => onOpenChange(false))
-      .ifFail(handleErrorWithToast);
+    // Disabled as part of project cleanup - component will be removed in task 5
+    // safe(() => setIsLoading(true))
+    //   .map(() =>
+    //     updateProjectAction(projectId, { instructions: { systemPrompt } }),
+    //   )
+    //   .watch(() => setIsLoading(false))
+    //   .ifOk(() => onSave(systemPrompt))
+    //   .ifOk(() => toast.success(t("Chat.Project.projectInstructionsUpdated")))
+    //   .ifOk(() => onOpenChange(false))
+    //   .ifFail(handleErrorWithToast);
+    console.log("Project system message update disabled - functionality removed");
+    setIsLoading(false);
+    onOpenChange(false);
   };
   useEffect(() => {
     if (isOpen) {

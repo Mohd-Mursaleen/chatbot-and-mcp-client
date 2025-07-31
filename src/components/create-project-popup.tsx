@@ -1,5 +1,5 @@
 "use client";
-import { insertProjectAction } from "@/app/api/chat/actions";
+// import { insertProjectAction } from "@/app/api/chat/actions"; // Removed as part of project cleanup
 import { Lightbulb, Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, {
@@ -35,14 +35,16 @@ export function CreateProjectPopup({ children }: PropsWithChildren) {
   const router = useRouter();
 
   const handleCreate = async () => {
-    safe(() => setIsLoading(true))
-      .map(() => insertProjectAction({ name }))
-      .watch(() => setIsLoading(false))
-      .ifOk(() => setIsOpen(false))
-      .ifOk(() => toast.success(t("Chat.Project.projectCreated")))
-      .ifOk(() => mutate("/api/project/list"))
-      .ifOk((project) => router.push(`/project/${project.id}`))
-      .ifFail(handleErrorWithToast);
+    // Disabled as part of project cleanup - component will be removed in task 5
+    // safe(() => setIsLoading(true))
+    //   .map(() => insertProjectAction({ name }))
+    //   .watch(() => setIsLoading(false))
+    //   .ifOk(() => setIsOpen(false))
+    //   .ifOk(() => toast.success(t("Chat.Project.projectCreated")))
+    //   .ifOk(() => mutate("/api/project/list"))
+    //   .ifOk((project) => router.push(`/project/${project.id}`))
+    //   .ifFail(handleErrorWithToast);
+    console.log("Project creation disabled - functionality removed");
   };
 
   const handleEnterKey = (e: KeyboardEvent<HTMLInputElement>) => {

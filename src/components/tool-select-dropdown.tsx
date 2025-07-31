@@ -58,7 +58,6 @@ import { useTranslations } from "next-intl";
 import { Switch } from "ui/switch";
 import { useShallow } from "zustand/shallow";
 import { useMcpList } from "@/hooks/queries/use-mcp-list";
-import { useWorkflowToolList } from "@/hooks/queries/use-workflow-tool-list";
 import { Avatar, AvatarFallback, AvatarImage } from "ui/avatar";
 import { WorkflowSummary } from "app-types/workflow";
 import { WorkflowGreeting } from "./workflow/workflow-greeting";
@@ -107,10 +106,6 @@ export function ToolSelectDropdown({
   const t = useTranslations("Chat.Tool");
   const { isLoading } = useMcpList({
     refreshInterval: 1000 * 30,
-  });
-
-  useWorkflowToolList({
-    refreshInterval: 1000 * 60 * 5,
   });
 
   const bindingTools = useMemo<string[]>(() => {

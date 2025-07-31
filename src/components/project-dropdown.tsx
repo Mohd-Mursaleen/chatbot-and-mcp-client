@@ -1,8 +1,8 @@
 "use client";
-import {
-  deleteProjectAction,
-  updateProjectNameAction,
-} from "@/app/api/chat/actions";
+// import {
+//   deleteProjectAction,
+//   updateProjectNameAction,
+// } from "@/app/api/chat/actions"; // Removed as part of project cleanup
 import { appStore } from "@/app/store";
 import { Project } from "app-types/chat";
 import { AudioWaveformIcon, Loader, PencilLine, Trash } from "lucide-react";
@@ -55,25 +55,27 @@ export function ProjectDropdown({ project, children, side, align }: Props) {
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    safe()
-      .watch(() => setIsDeleting(true))
-      .ifOk(() => deleteProjectAction(project.id))
-      .watch(() => setIsDeleting(false))
-      .watch(({ isOk, error }) => {
-        if (isOk) {
-          toast.success(t("Chat.Project.projectDeleted"));
-        } else {
-          toast.error(error.message || t("Chat.Project.failedToDeleteProject"));
-        }
-      })
-      .ifOk(() => {
-        if (currentProjectId === project.id) {
-          router.push("/");
-        }
-        mutate("/api/thread/list");
-        mutate("/api/project/list");
-      })
-      .unwrap();
+    // Disabled as part of project cleanup - component will be removed in task 5
+    // safe()
+    //   .watch(() => setIsDeleting(true))
+    //   .ifOk(() => deleteProjectAction(project.id))
+    //   .watch(() => setIsDeleting(false))
+    //   .watch(({ isOk, error }) => {
+    //     if (isOk) {
+    //       toast.success(t("Chat.Project.projectDeleted"));
+    //     } else {
+    //       toast.error(error.message || t("Chat.Project.failedToDeleteProject"));
+    //     }
+    //   })
+    //   .ifOk(() => {
+    //     if (currentProjectId === project.id) {
+    //       router.push("/");
+    //     }
+    //     mutate("/api/thread/list");
+    //     mutate("/api/project/list");
+    //   })
+    //   .unwrap();
+    console.log("Project deletion disabled - functionality removed");
   };
 
   return (
@@ -159,21 +161,24 @@ function UpdateProjectNameDialog({
   const handleUpdate = async (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsUpdating(true);
-    return safe(() => updateProjectNameAction(projectId, name))
-
-      .watch(({ isOk, error }) => {
-        setIsUpdating(false);
-        setIsOpen(false);
-        if (isOk) {
-          onUpdated(name);
-          mutate("/api/project/list");
-          mutate(`/projects/${projectId}`);
-          toast.success(t("Chat.Project.projectUpdated"));
-        } else {
-          toast.error(error.message || t("Chat.Project.failedToUpdateProject"));
-        }
-      })
-      .unwrap();
+    // Disabled as part of project cleanup - component will be removed in task 5
+    // return safe(() => updateProjectNameAction(projectId, name))
+    //   .watch(({ isOk, error }) => {
+    //     setIsUpdating(false);
+    //     setIsOpen(false);
+    //     if (isOk) {
+    //       onUpdated(name);
+    //       mutate("/api/project/list");
+    //       mutate(`/projects/${projectId}`);
+    //       toast.success(t("Chat.Project.projectUpdated"));
+    //     } else {
+    //       toast.error(error.message || t("Chat.Project.failedToUpdateProject"));
+    //     }
+    //   })
+    //   .unwrap();
+    console.log("Project update disabled - functionality removed");
+    setIsUpdating(false);
+    setIsOpen(false);
   };
 
   return (

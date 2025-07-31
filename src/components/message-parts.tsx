@@ -46,7 +46,6 @@ import { Separator } from "ui/separator";
 import { TextShimmer } from "ui/text-shimmer";
 import equal from "lib/equal";
 
-import { Avatar, AvatarFallback, AvatarImage } from "ui/avatar";
 import { DefaultToolName } from "lib/ai/tools";
 
 

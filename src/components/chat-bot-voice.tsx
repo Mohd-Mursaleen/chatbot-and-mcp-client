@@ -156,7 +156,6 @@ export function ChatBotVoice() {
         body: JSON.stringify({
           messages: mergeConsecutiveMessages(saveMessages),
           chatModel: model,
-          projectId: voiceChat.projectId,
         }),
       });
 
@@ -179,7 +178,7 @@ export function ChatBotVoice() {
         isOpen: false,
       },
     });
-  }, [messages, voiceChat.threadId, voiceChat.projectId, model]);
+  }, [messages, voiceChat.threadId, model]);
 
   const statusMessage = useMemo(() => {
     if (isLoading) {

@@ -23,7 +23,6 @@ import {
 } from "app-types/mcp";
 import { MANUAL_REJECT_RESPONSE_PROMPT } from "lib/ai/prompts";
 
-import { ObjectJsonSchema7 } from "app-types/util";
 import { safe } from "ts-safe";
 
 

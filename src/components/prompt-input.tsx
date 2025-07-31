@@ -23,7 +23,6 @@ import { ToolSelectDropdown } from "./tool-select-dropdown";
 import { Tooltip, TooltipContent, TooltipTrigger } from "ui/tooltip";
 import { useTranslations } from "next-intl";
 import { Editor } from "@tiptap/react";
-import { WorkflowSummary } from "app-types/workflow";
 import { Avatar, AvatarFallback, AvatarImage } from "ui/avatar";
 import equal from "lib/equal";
 import { MCPIcon } from "ui/mcp-icon";
@@ -68,14 +67,12 @@ export default function PromptInput({
 
   const [
     currentThreadId,
-    currentProjectId,
     globalModel,
     threadMentions,
     appStoreMutate,
   ] = appStore(
     useShallow((state) => [
       state.currentThreadId,
-      state.currentProjectId,
       state.chatModel,
       state.threadMentions,
       state.mutate,
@@ -135,19 +132,6 @@ export default function PromptInput({
       });
     },
     [mentions, threadId],
-  );
-
-  const onSelectWorkflow = useCallback(
-    (workflow: WorkflowSummary) => {
-      addMention({
-        type: "workflow",
-        name: workflow.name,
-        icon: workflow.icon,
-        workflowId: workflow.id,
-        description: workflow.description,
-      });
-    },
-    [addMention],
   );
 
   const onChangeMention = useCallback(
@@ -253,18 +237,6 @@ export default function PromptInput({
                 >
                   <Paperclip />
                 </Button>
-
-                {!toolDisabled && (
-                  <>
-                    <ToolModeDropdown />
-                    <ToolSelectDropdown
-                      align="start"
-                      side="top"
-                      onSelectWorkflow={onSelectWorkflow}
-                      mentions={mentions}
-                    />
-                  </>
-                )}
                 <div className="flex-1" />
 
                 <SelectModel onSelect={setChatModel} defaultModel={chatModel}>
@@ -290,7 +262,6 @@ export default function PromptInput({
                               ...state.voiceChat,
                               isOpen: true,
                               threadId: currentThreadId ?? undefined,
-                              projectId: currentProjectId ?? undefined,
                             },
                           }));
                         }}

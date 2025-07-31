@@ -6,7 +6,6 @@ import { Toggle } from "ui/toggle";
 import {
   AudioWaveformIcon,
   ChevronDown,
-  ChevronRight,
   MessageCircleDashed,
   PanelLeft,
 } from "lucide-react";
@@ -17,7 +16,6 @@ import { useEffect, useMemo } from "react";
 import { ThreadDropdown } from "../thread-dropdown";
 import { appStore } from "@/app/store";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
 import { useShallow } from "zustand/shallow";
 import { getShortcutKeyList, Shortcuts } from "lib/keyboard-shortcuts";
 import { useTranslations } from "next-intl";
@@ -76,7 +74,6 @@ export function AppHeader() {
                     ...state.voiceChat,
                     isOpen: true,
                     threadId: undefined,
-                    projectId: undefined,
                   },
                 }));
               }}
@@ -143,24 +140,17 @@ export function AppHeader() {
 }
 
 function ThreadDropdownComponent() {
-  const [threadList, currentThreadId, projectList, generatingTitleThreadIds] =
+  const [threadList, currentThreadId, generatingTitleThreadIds] =
     appStore(
       useShallow((state) => [
         state.threadList,
         state.currentThreadId,
-        state.projectList,
         state.generatingTitleThreadIds,
       ]),
     );
   const currentThread = useMemo(() => {
     return threadList.find((thread) => thread.id === currentThreadId);
   }, [threadList, currentThreadId]);
-
-  const currentProject = useMemo(() => {
-    return projectList.find(
-      (project) => project.id === currentThread?.projectId,
-    );
-  }, [currentThread, projectList]);
 
   useEffect(() => {
     if (currentThread?.id) {
@@ -175,18 +165,6 @@ function ThreadDropdownComponent() {
       <div className="w-1 h-4">
         <Separator orientation="vertical" />
       </div>
-      {currentProject && (
-        <>
-          <Link href={`/project/${currentProject.id}`}>
-            <Button variant="ghost" className="flex items-center gap-1">
-              <p className="text-muted-foreground max-w-32 truncate">
-                {currentProject.name}
-              </p>
-            </Button>
-          </Link>
-          <ChevronRight size={14} className="text-muted-foreground" />
-        </>
-      )}
 
       <ThreadDropdown
         threadId={currentThread.id}

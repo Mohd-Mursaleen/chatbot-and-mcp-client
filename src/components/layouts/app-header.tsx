@@ -16,11 +16,10 @@ import { appStore } from "@/app/store";
 import { usePathname } from "next/navigation";
 import { useShallow } from "zustand/shallow";
 import { getShortcutKeyList, Shortcuts } from "lib/keyboard-shortcuts";
-import { useTranslations } from "next-intl";
 import { TextShimmer } from "ui/text-shimmer";
 
 export function AppHeader() {
-#  const t = useTranslations();
+ 
   const { toggleSidebar } = useSidebar();
   const currentPaths = usePathname();
 
@@ -40,7 +39,7 @@ export function AppHeader() {
         </TooltipTrigger>
         <TooltipContent align="start" side="bottom">
           <div className="flex items-center gap-2">
-            {t("KeyboardShortcuts.toggleSidebar")}
+            {"Toggle Sidebar"}
             <div className="text-xs text-muted-foreground flex items-center gap-1">
               {getShortcutKeyList(Shortcuts.toggleSidebar).map((key) => (
                 <span

@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  AudioWaveformIcon,
   ChevronDown,
   CornerRightUp,
   Paperclip,
@@ -17,10 +16,6 @@ import { appStore } from "@/app/store";
 import { useShallow } from "zustand/shallow";
 import { ChatMention, ChatModel } from "app-types/chat";
 import dynamic from "next/dynamic";
-import { ToolModeDropdown } from "./tool-mode-dropdown";
-
-import { ToolSelectDropdown } from "./tool-select-dropdown";
-import { Tooltip, TooltipContent, TooltipTrigger } from "ui/tooltip";
 import { useTranslations } from "next-intl";
 import { Editor } from "@tiptap/react";
 import { Avatar, AvatarFallback, AvatarImage } from "ui/avatar";
@@ -251,48 +246,7 @@ export default function PromptInput({
                     <ChevronDown className="size-3" />
                   </Button>
                 </SelectModel>
-                {!isLoading && !input.length && !voiceDisabled ? (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        size={"sm"}
-                        onClick={() => {
-                          appStoreMutate((state) => ({
-                            voiceChat: {
-                              ...state.voiceChat,
-                              isOpen: true,
-                              threadId: currentThreadId ?? undefined,
-                            },
-                          }));
-                        }}
-                        className="rounded-full p-2!"
-                      >
-                        <AudioWaveformIcon size={16} />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>{t("VoiceChat.title")}</TooltipContent>
-                  </Tooltip>
-                ) : (
-                  <div
-                    onClick={() => {
-                      if (isLoading) {
-                        onStop();
-                      } else {
-                        submit();
-                      }
-                    }}
-                    className="fade-in animate-in cursor-pointer text-muted-foreground rounded-full p-2 bg-secondary hover:bg-accent-foreground hover:text-accent transition-all duration-200"
-                  >
-                    {isLoading ? (
-                      <Square
-                        size={16}
-                        className="fill-muted-foreground text-muted-foreground"
-                      />
-                    ) : (
-                      <CornerRightUp size={16} />
-                    )}
-                  </div>
-                )}
+                
               </div>
             </div>
           </div>

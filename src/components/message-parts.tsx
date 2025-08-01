@@ -481,29 +481,7 @@ const loading = memo(function Loading() {
   );
 });
 
-const PieChart = dynamic(
-  () => import("./tool-invocation/pie-chart").then((mod) => mod.PieChart),
-  {
-    ssr: false,
-    loading,
-  },
-);
 
-const BarChart = dynamic(
-  () => import("./tool-invocation/bar-chart").then((mod) => mod.BarChart),
-  {
-    ssr: false,
-    loading,
-  },
-);
-
-const LineChart = dynamic(
-  () => import("./tool-invocation/line-chart").then((mod) => mod.LineChart),
-  {
-    ssr: false,
-    loading,
-  },
-);
 
 const WebSearchToolInvocation = dynamic(
   () =>
@@ -516,14 +494,7 @@ const WebSearchToolInvocation = dynamic(
   },
 );
 
-const CodeExecutor = dynamic(
-  () =>
-    import("./tool-invocation/code-executor").then((mod) => mod.CodeExecutor),
-  {
-    ssr: false,
-    loading,
-  },
-);
+
 
 export const ToolMessagePart = memo(
   ({
@@ -538,7 +509,7 @@ export const ToolMessagePart = memo(
   }: ToolMessagePartProps) => {
     const t = useTranslations("");
     const { toolInvocation } = part;
-    const { toolName, toolCallId, state, args } = toolInvocation;
+    const { toolName, state, args } = toolInvocation;
     const [expanded, setExpanded] = useState(false);
     const { copied: copiedInput, copy: copyInput } = useCopy();
     const { copied: copiedOutput, copy: copyOutput } = useCopy();
@@ -603,40 +574,11 @@ export const ToolMessagePart = memo(
         return <WebSearchToolInvocation part={toolInvocation} />;
       }
 
-      if (toolName === DefaultToolName.JavascriptExecution) {
-        return (
-          <CodeExecutor
-            part={toolInvocation}
-            onResult={onToolCallDirect}
-            type="javascript"
-          />
-        );
-      }
 
-      if (toolName === DefaultToolName.PythonExecution) {
-        return (
-          <CodeExecutor
-            part={toolInvocation}
-            onResult={onToolCallDirect}
-            type="python"
-          />
-        );
-      }
 
       if (state === "result") {
         switch (toolName) {
-          case DefaultToolName.CreatePieChart:
-            return (
-              <PieChart key={`${toolCallId}-${toolName}`} {...(args as any)} />
-            );
-          case DefaultToolName.CreateBarChart:
-            return (
-              <BarChart key={`${toolCallId}-${toolName}`} {...(args as any)} />
-            );
-          case DefaultToolName.CreateLineChart:
-            return (
-              <LineChart key={`${toolCallId}-${toolName}`} {...(args as any)} />
-            );
+          // Chart components removed as part of visualization cleanup
         }
       }
       return null;

@@ -3,7 +3,6 @@ import { AllowedMCPServer, MCPServerInfo } from "app-types/mcp";
 import { cn, objectFlow } from "lib/utils";
 import {
   AtSign,
-  ChartColumn,
   Check,
   ChevronRight,
   ClipboardCheck,
@@ -711,9 +710,6 @@ function AppDefaultToolKitSelector() {
       const id = toolkit;
       let icon = <Wrench className="size-3.5 text-primary" />;
       switch (toolkit) {
-        case AppDefaultToolkit.Visualization:
-          icon = <ChartColumn className="size-3.5 text-blue-500 stroke-3" />;
-          break;
         case AppDefaultToolkit.WebSearch:
           icon = <GlobalIcon className="text-blue-400 size-3.5" />;
           break;

@@ -219,18 +219,6 @@ function ChatMentionInputSuggestion({
       const icon = <DefaultToolIcon name={toolName} />;
       let description = "";
       switch (toolName) {
-        case DefaultToolName.CreatePieChart:
-          label = "pie-chart";
-          description = "Create a pie chart";
-          break;
-        case DefaultToolName.CreateBarChart:
-          label = "bar-chart";
-          description = "Create a bar chart";
-          break;
-        case DefaultToolName.CreateLineChart:
-          label = "line-chart";
-          description = "Create a line chart";
-          break;
         case DefaultToolName.WebSearch:
           label = "web-search";
           description = "Search the web";
@@ -243,14 +231,7 @@ function ChatMentionInputSuggestion({
           label = "HTTP";
           description = "Send an http request";
           break;
-        case DefaultToolName.JavascriptExecution:
-          label = "js-execution";
-          description = "Execute simple javascript code";
-          break;
-        case DefaultToolName.PythonExecution:
-          label = "python-execution";
-          description = "Execute simple python code";
-          break;
+
       }
       return {
         id: toolName,

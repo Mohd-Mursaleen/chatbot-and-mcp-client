@@ -2,7 +2,6 @@
 
 import {
   ChevronDown,
-  CornerRightUp,
   Paperclip,
   Square,
   XIcon,

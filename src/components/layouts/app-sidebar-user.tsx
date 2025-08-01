@@ -21,22 +21,16 @@ import {
   LogOutIcon,
   Settings2,
   Palette,
-  Languages,
   Sun,
   MoonStar,
   ChevronRight,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { appStore } from "@/app/store";
-import { BASE_THEMES, COOKIE_KEY_LOCALE, SUPPORTED_LOCALES } from "lib/const";
+import { BASE_THEMES} from "lib/const";
 import { capitalizeFirstLetter, cn } from "lib/utils";
 import { authClient } from "auth/client";
-import { useTranslations } from "next-intl";
 import useSWR from "swr";
-import { getLocaleAction } from "@/i18n/get-locale";
-import { useCallback } from "react";
-import { GithubIcon } from "ui/github-icon";
-import { DiscordIcon } from "ui/discord-icon";
 import { useThemeStyle } from "@/hooks/use-theme-style";
 import { Session, User } from "better-auth";
 
@@ -44,7 +38,6 @@ export function AppSidebarUser({
   session,
 }: { session?: { session: Session; user: User } }) {
   const appStoreMutate = appStore((state) => state.mutate);
-  const t = useTranslations("Layout");
 
   const user = session?.user;
 
@@ -121,41 +114,22 @@ export function AppSidebarUser({
               onClick={() => appStoreMutate({ openChatPreferences: true })}
             >
               <Settings2 className="size-4 text-foreground" />
-              <span>{t("chatPreferences")}</span>
+              <span>{"chatPreferences"}</span>
             </DropdownMenuItem>
             <SelectTheme />
-            <SelectLanguage />
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="cursor-pointer"
               onClick={() => appStoreMutate({ openShortcutsPopup: true })}
             >
               <Command className="size-4 text-foreground" />
-              <span>{t("keyboardShortcuts")}</span>
+              <span>{"keyboardShortcuts"}</span>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                window.open(
-                  "https://github.com/cgoinglove/better-chatbot/issues/new",
-                  "_blank",
-                );
-              }}
-            >
-              <GithubIcon className="size-4 fill-foreground" />
-              <span>{t("reportAnIssue")}</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                window.open("https://discord.gg/gCRu69Upnp", "_blank");
-              }}
-            >
-              <DiscordIcon className="size-4 fill-foreground" />
-              <span>{t("joinCommunity")}</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
+            
+        
             <DropdownMenuItem onClick={logout} className="cursor-pointer">
               <LogOutIcon className="size-4 text-foreground" />
-              <span>{t("signOut")}</span>
+              <span>{"signOut"}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -165,7 +139,6 @@ export function AppSidebarUser({
 }
 
 function SelectTheme() {
-  const t = useTranslations("Layout");
 
   const { theme = "light", setTheme } = useTheme();
 
@@ -187,7 +160,7 @@ function SelectTheme() {
         }
       >
         <Palette className="mr-2 size-4" />
-        <span className="mr-auto">{t("theme")}</span>
+        <span className="mr-auto">{"theme"}</span>
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent className="w-48">
@@ -242,41 +215,4 @@ function SelectTheme() {
   );
 }
 
-function SelectLanguage() {
-  const t = useTranslations("Layout");
-  const { data: currentLocale } = useSWR(COOKIE_KEY_LOCALE, getLocaleAction, {
-    fallbackData: SUPPORTED_LOCALES[0].code,
-    revalidateOnFocus: false,
-  });
-  const handleOnChange = useCallback((locale: string) => {
-    document.cookie = `${COOKIE_KEY_LOCALE}=${locale}; path=/;`;
-    window.location.reload();
-  }, []);
 
-  return (
-    <DropdownMenuSub>
-      <DropdownMenuSubTrigger>
-        <Languages className="mr-2 size-4" />
-        <span>{t("language")}</span>
-      </DropdownMenuSubTrigger>
-      <DropdownMenuPortal>
-        <DropdownMenuSubContent className="w-48 max-h-96 overflow-y-auto">
-          <DropdownMenuLabel className="text-muted-foreground">
-            {t("language")}
-          </DropdownMenuLabel>
-          {SUPPORTED_LOCALES.map((locale) => (
-            <DropdownMenuCheckboxItem
-              key={locale.code}
-              checked={locale.code === currentLocale}
-              onCheckedChange={() =>
-                locale.code !== currentLocale && handleOnChange(locale.code)
-              }
-            >
-              {locale.name}
-            </DropdownMenuCheckboxItem>
-          ))}
-        </DropdownMenuSubContent>
-      </DropdownMenuPortal>
-    </DropdownMenuSub>
-  );
-}

@@ -1,143 +1,127 @@
-"use client";
+import React, { useState, useMemo } from 'react';
+import { ChevronDown, Send } from 'lucide-react';
 
-import {
-  ChevronDown,
-  Paperclip,
-  XIcon,
-} from "lucide-react";
-import { useCallback, useMemo, useRef } from "react";
-import { Button } from "ui/button";
-import { notImplementedToast } from "ui/shared-toast";
-import { UseChatHelpers } from "@ai-sdk/react";
-import { SelectModel } from "./select-model";
-import { appStore } from "@/app/store";
-import { useShallow } from "zustand/shallow";
-import { ChatMention, ChatModel } from "app-types/chat";
-import dynamic from "next/dynamic";
-import { useTranslations } from "next-intl";
-import { Editor } from "@tiptap/react";
-import { Avatar, AvatarFallback, AvatarImage } from "ui/avatar";
-import equal from "lib/equal";
-import { MCPIcon } from "ui/mcp-icon";
-import { DefaultToolName } from "lib/ai/tools";
-import { DefaultToolIcon } from "./default-tool-icon";
+interface ChatModel {
+  model: string;
+  name: string;
+}
 
 interface PromptInputProps {
   placeholder?: string;
   setInput: (value: string) => void;
   input: string;
   onStop: () => void;
-  append: UseChatHelpers["append"];
-  toolDisabled?: boolean;
+  append: (message: any) => void;
   isLoading?: boolean;
   model?: ChatModel;
   setModel?: (model: ChatModel) => void;
-  voiceDisabled?: boolean;
   threadId?: string;
 }
 
-const ChatMentionInput = dynamic(() => import("./chat-mention-input"), {
-  ssr: false,
-  loading() {
-    return <div className="h-[2rem] w-full animate-pulse"></div>;
-  },
-});
+const availableModels: ChatModel[] = [
+  { model: 'gpt-4.1', name: 'GPT-4.1' },
+  { model: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo' },
+  { model: 'claude-3', name: 'Claude 3' },
+];
+
+// Simple Button component
+const Button = ({ 
+  children, 
+  onClick, 
+  disabled, 
+  variant = 'default',
+  size = 'default',
+  className = '',
+  ...props 
+}: any) => {
+  const baseClasses = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none';
+  const variantClasses = {
+    default: 'bg-blue-600 text-white hover:bg-blue-700',
+    ghost: 'hover:bg-gray-100 hover:text-gray-900',
+  };
+  const sizeClasses = {
+    default: 'h-10 py-2 px-4',
+    sm: 'h-9 px-3 rounded-md',
+    icon: 'h-10 w-10',
+  };
+  
+  return (
+    <button
+      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+      onClick={onClick}
+      disabled={disabled}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+
+// Simple Select component
+const Select = ({ children, onValueChange, defaultValue }: any) => {
+  const [isOpen, setIsOpen] = useState(false);
+  // const [selectedValue, setSelectedValue] = useState(defaultValue);
+
+  const handleSelect = (value: string) => {
+    // setSelectedValue(value);
+    onValueChange?.(value);
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="relative">
+      <div onClick={() => setIsOpen(!isOpen)}>
+        {children}
+      </div>
+      {isOpen && (
+        <div className="absolute top-full mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+          {availableModels.map((model) => (
+            <div
+              key={model.model}
+              className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+              onClick={() => handleSelect(model.model)}
+            >
+              {model.name}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default function PromptInput({
-  placeholder,
+  placeholder = "Type your message here",
   append,
   model,
   setModel,
   input,
   setInput,
-  isLoading,
-  threadId,
+  isLoading = false,
 }: PromptInputProps) {
-  const t = useTranslations("Chat");
+  const [selectedModel, setSelectedModel] = useState(model?.model || 'gpt-4');
 
-  const [
-    globalModel,
-    threadMentions,
-    appStoreMutate,
-  ] = appStore(
-    useShallow((state) => [
-      state.currentThreadId,
-      state.chatModel,
-      state.threadMentions,
-      state.mutate,
-    ]),
-  );
+  const currentModel = useMemo(() => {
+    return availableModels.find(m => m.model === selectedModel) || availableModels[0];
+  }, [selectedModel]);
 
-  const mentions = useMemo<ChatMention[]>(() => {
-    if (!threadId) return [];
-    return threadMentions[threadId!] ?? [];
-  }, [threadMentions, threadId]);
-
-  const chatModel = useMemo(() => {
-    return model ?? globalModel;
-  }, [model, globalModel]);
-
-  const editorRef = useRef<Editor | null>(null);
-
-  const setChatModel = useCallback(
-    (model: ChatModel) => {
-      if (setModel) {
-        setModel(model);
-      } else {
-        appStoreMutate({ chatModel: model });
-      }
-    },
-    [setModel, appStoreMutate],
-  );
-
-  const deleteMention = useCallback(
-    (mention: ChatMention) => {
-      if (!threadId) return;
-      appStoreMutate((prev) => {
-        const newMentions = mentions.filter((m) => !equal(m, mention));
-        return {
-          threadMentions: {
-            ...prev.threadMentions,
-            [threadId!]: newMentions,
-          },
-        };
-      });
-    },
-    [mentions, threadId],
-  );
-
-  const addMention = useCallback(
-    (mention: ChatMention) => {
-      if (!threadId) return;
-      appStoreMutate((prev) => {
-        if (mentions.some((m) => equal(m, mention))) return prev;
-        const newMentions = [...mentions, mention];
-        return {
-          threadMentions: {
-            ...prev.threadMentions,
-            [threadId!]: newMentions,
-          },
-        };
-      });
-    },
-    [mentions, threadId],
-  );
-
-  const onChangeMention = useCallback(
-    (mentions: ChatMention[]) => {
-      mentions.forEach(addMention);
-    },
-    [addMention],
-  );
+  const handleModelChange = (modelValue: string) => {
+    const newModel = availableModels.find(m => m.model === modelValue);
+    if (newModel) {
+      setSelectedModel(modelValue);
+      setModel?.(newModel);
+    }
+  };
 
   const submit = () => {
     if (isLoading) return;
     const userMessage = input?.trim() || "";
     if (userMessage.length === 0) return;
+    
     setInput("");
-    append!({
+    append({
       role: "user",
-      content: "",
+      content: userMessage,
       parts: [
         {
           type: "text",
@@ -147,104 +131,57 @@ export default function PromptInput({
     });
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      submit();
+    }
+  };
+
   return (
-    <div className="max-w-3xl mx-auto fade-in animate-in">
-      <div className="z-10 mx-auto w-full max-w-3xl relative">
-        <fieldset className="flex w-full min-w-0 max-w-full flex-col px-4">
-          <div className="ring-8 ring-muted/60 overflow-hidden rounded-4xl backdrop-blur-sm transition-all duration-200 bg-muted/60 relative flex w-full flex-col cursor-text z-10 items-stretch focus-within:bg-muted hover:bg-muted focus-within:ring-muted hover:ring-muted">
-            {mentions.length > 0 && (
-              <div className="bg-input rounded-b-sm rounded-t-3xl p-3 flex flex-col gap-4">
-                {mentions.map((mention, i) => {
-                  return (
-                    <div key={i} className="flex items-center gap-2">
-                      {mention.type === "workflow" ? (
-                        <Avatar
-                          className="size-6 p-1 ring ring-border rounded-full flex-shrink-0"
-                          style={mention.icon?.style}
-                        >
-                          <AvatarImage src={mention.icon?.value} />
-                          <AvatarFallback>
-                            {mention.name.slice(0, 1)}
-                          </AvatarFallback>
-                        </Avatar>
-                      ) : (
-                        <Button className="size-6 flex items-center justify-center ring ring-border rounded-full flex-shrink-0 p-0.5">
-                          {mention.type == "mcpServer" ? (
-                            <MCPIcon className="size-3.5" />
-                          ) : (
-                            <DefaultToolIcon
-                              name={mention.name as DefaultToolName}
-                              className="size-3.5"
-                            />
-                          )}
-                        </Button>
-                      )}
-
-                      <div className="flex flex-col flex-1 min-w-0">
-                        <span className="text-sm font-semibold truncate">
-                          {mention.name}
-                        </span>
-                        {mention.description ? (
-                          <span className="text-muted-foreground text-xs truncate">
-                            {mention.description}
-                          </span>
-                        ) : null}
-                      </div>
-                      <Button
-                        variant={"ghost"}
-                        size={"icon"}
-                        disabled={!threadId}
-                        className="rounded-full hover:bg-input! flex-shrink-0"
-                        onClick={() => {
-                          deleteMention(mention);
-                        }}
-                      >
-                        <XIcon />
-                      </Button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-            <div className="flex flex-col gap-3.5 px-3 py-2">
-              <div className="relative min-h-[2rem]">
-                <ChatMentionInput
-                  input={input}
-                  onChange={setInput}
-                  onChangeMention={onChangeMention}
-                  onEnter={submit}
-                  placeholder={placeholder ?? t("placeholder")}
-                  ref={editorRef}
-                />
-              </div>
-              <div className="flex w-full items-center gap-[2px] z-30">
-                <Button
-                  variant={"ghost"}
-                  size={"sm"}
-                  className="rounded-full hover:bg-input! p-2!"
-                  onClick={notImplementedToast}
-                >
-                  <Paperclip />
-                </Button>
-                <div className="flex-1" />
-
-                <SelectModel onSelect={setChatModel} defaultModel={chatModel}>
-                  <Button
-                    variant={"ghost"}
-                    size={"sm"}
-                    className="rounded-full data-[state=open]:bg-input! hover:bg-input! mr-1"
-                  >
-                    {chatModel?.model ?? (
-                      <span className="text-muted-foreground">model</span>
-                    )}
-                    <ChevronDown className="size-3" />
-                  </Button>
-                </SelectModel>
-                
-              </div>
-            </div>
+    <div className="max-w-3xl mx-auto p-4">
+      <div className="w-full">
+        <div className="flex flex-col gap-4">
+          {/* Input Area */}
+          <div className="relative">
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder={placeholder}
+              className="w-full min-h-[100px] p-4 border border-gray-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              disabled={isLoading}
+            />
           </div>
-        </fieldset>
+
+          {/* Controls */}
+          <div className="flex items-center justify-between">
+            {/* Model Selection */}
+            <Select
+              defaultValue={selectedModel}
+              onValueChange={handleModelChange}
+            >
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2"
+              >
+                {currentModel.name}
+                <ChevronDown className="w-4 h-4" />
+              </Button>
+            </Select>
+
+            {/* Submit Button */}
+            <Button
+              onClick={submit}
+              disabled={isLoading || !input.trim()}
+              className="gap-2"
+            >
+              {isLoading ? 'Sending...' : 'Send'}
+              <Send className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

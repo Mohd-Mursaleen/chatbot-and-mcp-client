@@ -71,7 +71,6 @@ export type ChatMessageAnnotation = {
 
 export const chatApiSchemaRequestBodySchema = z.object({
   id: z.string(),
-  projectId: z.string().optional(),
   message: z.any() as z.ZodType<UIMessage>,
   chatModel: z
     .object({
@@ -96,7 +95,7 @@ export type ToolInvocationUIPart = Extract<
 >;
 
 export type ChatRepository = {
-  insertThread(thread: Omit<ChatThread, "createdAt">): Promise<ChatThread>;
+  insertThread(thread: PartialBy<Omit<ChatThread, "createdAt">, "projectId">): Promise<ChatThread>;
 
   selectThread(id: string): Promise<ChatThread | null>;
 

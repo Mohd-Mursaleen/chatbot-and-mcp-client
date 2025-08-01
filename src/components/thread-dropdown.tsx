@@ -28,7 +28,6 @@ import {
   CommandList,
   CommandSeparator,
 } from "ui/command";
-import { useTranslations } from "next-intl";
 
 type Props = PropsWithChildren<{
   threadId: string;
@@ -47,7 +46,7 @@ export function ThreadDropdown({
   align,
 }: Props) {
   const router = useRouter();
-  const t = useTranslations("Chat.Thread");
+
   const push = useToRef(router.push);
 
   const currentThreadId = appStore((state) => state.currentThreadId);
@@ -60,16 +59,16 @@ export function ThreadDropdown({
     safe()
       .ifOk(() => {
         if (!title) {
-          throw new Error(t("titleRequired"));
+          throw new Error("titleRequired");
         }
       })
       .ifOk(() => updateThreadAction(threadId, { title }))
       .ifOk(() => mutate("/api/thread/list"))
       .watch(({ isOk, error }) => {
         if (isOk) {
-          toast.success(t("threadUpdated"));
+          toast.success("threadUpdated");
         } else {
-          toast.error(error.message || t("failedToUpdateThread"));
+          toast.error(error.message || "failedToUpdateThread");
         }
       });
   };
@@ -82,9 +81,9 @@ export function ThreadDropdown({
       .watch(() => setOpen(false))
       .watch(({ isOk, error }) => {
         if (isOk) {
-          toast.success(t("threadDeleted"));
+          toast.success("threadDeleted");
         } else {
-          toast.error(error.message || t("failedToDeleteThread"));
+          toast.error(error.message || "failedToDeleteThread");
         }
       })
       .ifOk(() => onDeleted?.())
@@ -103,7 +102,7 @@ export function ThreadDropdown({
       <PopoverContent className=" p-0 w-[220px]" side={side} align={align}>
         <Command>
           <div className="flex items-center gap-2 px-2 py-1 text-xs pt-2 text-muted-foreground ml-1">
-            {t("chat")}
+            {"chat"}
           </div>
 
           <CommandList>
@@ -115,7 +114,7 @@ export function ThreadDropdown({
                 >
                   <div className="flex items-center gap-2 w-full px-2 py-1 rounded">
                     <PencilLine className="text-foreground" />
-                    <span className="mr-4">{t("renameChat")}</span>
+                    <span className="mr-4">{"renameChat"}</span>
                   </div>
                 </UpdateThreadNameDialog>
               </CommandItem>
@@ -128,7 +127,7 @@ export function ThreadDropdown({
                   onClick={handleDelete}
                 >
                   <Trash className="text-destructive" />
-                  <span className="text-destructive">{t("deleteChat")}</span>
+                  <span className="text-destructive">{"deleteChat"}</span>
                   {isDeleting && (
                     <Loader className="ml-auto h-4 w-4 animate-spin" />
                   )}
@@ -151,13 +150,13 @@ function UpdateThreadNameDialog({
   onUpdated: (title: string) => void;
 }>) {
   const [title, setTitle] = useState(initialTitle);
-  const t = useTranslations();
+
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent hideClose>
         <DialogHeader>
-          <DialogTitle>{t("Chat.Thread.renameChat")}</DialogTitle>
+          <DialogTitle>{"renameChat"}</DialogTitle>
         </DialogHeader>
         <DialogDescription>
           <Input
@@ -175,11 +174,11 @@ function UpdateThreadNameDialog({
         </DialogDescription>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="secondary">{t("Common.cancel")}</Button>
+            <Button variant="secondary">{"cancel"}</Button>
           </DialogClose>
           <DialogClose asChild>
             <Button variant="outline" onClick={() => onUpdated(title)}>
-              {t("Common.update")}
+              {"update"}
             </Button>
           </DialogClose>
         </DialogFooter>

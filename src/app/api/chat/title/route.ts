@@ -20,16 +20,14 @@ export async function POST(request: Request) {
       chatModel,
       message = "hello",
       threadId,
-      projectId,
     } = json as {
       chatModel?: ChatModel;
       message: string;
-      projectId?: string;
       threadId: string;
     };
 
     logger.info(
-      `chatModel: ${chatModel?.provider}/${chatModel?.model}, threadId: ${threadId}, projectId: ${projectId}`,
+      `chatModel: ${chatModel?.provider}/${chatModel?.model}, threadId: ${threadId}`,
     );
     logger.info(`message: ${message}`);
 
@@ -54,7 +52,6 @@ Generate Title:`,
           .upsertThread({
             id: threadId,
             title: ctx.text,
-            projectId,
             userId: session.user.id,
           })
           .catch((err) => logger.error(err));

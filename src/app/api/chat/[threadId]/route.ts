@@ -14,7 +14,7 @@ export async function POST(
     return new Response("Unauthorized", { status: 401 });
   }
   const { threadId } = await params;
-  const { messages, chatModel, projectId } = await request.json();
+  const { messages, chatModel } = await request.json();
 
   let thread = await chatRepository.selectThread(threadId);
   if (!thread) {
@@ -24,7 +24,6 @@ export async function POST(
     });
     thread = await chatRepository.insertThread({
       id: threadId,
-      projectId: projectId ?? null,
       title,
       userId: session.user.id,
     });

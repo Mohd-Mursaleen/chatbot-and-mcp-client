@@ -5,7 +5,7 @@ import { generateUUID } from "lib/utils";
 import { generateTitleFromUserMessageAction } from "../chat/actions";
 
 export async function POST(request: Request) {
-  const { id, projectId, message, model } = await request.json();
+  const { id, message, model } = await request.json();
 
   const session = await getSession();
 
@@ -20,7 +20,6 @@ export async function POST(request: Request) {
 
   const newThread = await chatRepository.insertThread({
     id: id ?? generateUUID(),
-    projectId,
     title,
     userId: session.user.id,
   });

@@ -1,6 +1,4 @@
 import type { NextConfig } from "next";
-import createNextIntlPlugin from "next-intl/plugin";
-
 
 export default () => {
   const nextConfig: NextConfig = {
@@ -14,6 +12,5 @@ export default () => {
       NEXT_PUBLIC_GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
     },
   };
-  const withNextIntl = createNextIntlPlugin();
-  return withNextIntl(nextConfig);
+  return nextConfig;
 };

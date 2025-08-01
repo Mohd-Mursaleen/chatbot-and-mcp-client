@@ -41,7 +41,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "ui/dialog";
-import { useTranslations } from "next-intl";
 import { Think } from "ui/think";
 import { useGenerateThreadTitle } from "@/hooks/queries/use-generate-thread-title";
 
@@ -362,7 +361,6 @@ function DeleteThreadPopup({
   onClose,
   open,
 }: { threadId: string; onClose: () => void; open: boolean }) {
-  const t = useTranslations();
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
   const handleDelete = useCallback(() => {
@@ -370,27 +368,27 @@ function DeleteThreadPopup({
     safe(() => deleteThreadAction(threadId))
       .watch(() => setIsDeleting(false))
       .ifOk(() => {
-        toast.success(t("Chat.Thread.threadDeleted"));
+        toast.success("threadDeleted");
         router.push("/");
       })
-      .ifFail(() => toast.error(t("Chat.Thread.failedToDeleteThread")))
+      .ifFail(() => toast.error("failedToDeleteThread"))
       .watch(() => onClose());
   }, [threadId, router]);
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t("Chat.Thread.deleteChat")}</DialogTitle>
+          <DialogTitle>{"Chat.Thread.deleteChat"}</DialogTitle>
           <DialogDescription>
-            {t("Chat.Thread.areYouSureYouWantToDeleteThisChatThread")}
+            {"areYouSureYouWantToDeleteThisChatThread"}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>
-            {t("Common.cancel")}
+            {"cancel"}
           </Button>
           <Button variant="destructive" onClick={handleDelete} autoFocus>
-            {t("Common.delete")}
+            {"Cancel"}
             {isDeleting && <Loader className="size-3.5 ml-2 animate-spin" />}
           </Button>
         </DialogFooter>

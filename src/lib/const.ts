@@ -14,8 +14,6 @@ export const FILE_BASED_MCP_CONFIG =
   process.env.FILE_BASED_MCP_CONFIG === "true";
 
 export const COOKIE_KEY_SIDEBAR_STATE = "sidebar:state";
-export const COOKIE_KEY_LOCALE = "i18n:locale";
-
 export const BASE_THEMES = [
   "default",
   "zinc",
@@ -36,32 +34,4 @@ export const BASE_THEMES = [
   "vintage-vinyl",
   "misty-harbor",
   "zen-garden",
-];
-
-export const SUPPORTED_LOCALES = [
-  {
-    code: "en",
-    name: "English 🇺🇸",
-  },
-  {
-    code: "ko",
-    name: "Korean 🇰🇷",
-  },
-
-  {
-    code: "es",
-    name: "Spanish 🇪🇸",
-  },
-  {
-    code: "fr",
-    name: "French 🇫🇷",
-  },
-  {
-    code: "ja",
-    name: "Japanese 🇯🇵",
-  },
-  {
-    code: "zh",
-    name: "Chinese 🇨🇳",
-  },
 ];

@@ -38,8 +38,6 @@ import {
   ClientToolInvocation,
   ToolInvocationUIPart,
 } from "app-types/chat";
-
-import { useTranslations } from "next-intl";
 import { extractMCPToolId } from "lib/ai/mcp/mcp-tool-id";
 import { Separator } from "ui/separator";
 
@@ -507,7 +505,7 @@ export const ToolMessagePart = memo(
     setMessages,
     isManualToolInvocation,
   }: ToolMessagePartProps) => {
-    const t = useTranslations("");
+
     const { toolInvocation } = part;
     const { toolName, state, args } = toolInvocation;
     const [expanded, setExpanded] = useState(false);
@@ -732,7 +730,7 @@ export const ToolMessagePart = memo(
                       }
                     >
                       <Check />
-                      {t("Common.approve")}
+                      {"approve"}
                     </Button>
                     <Button
                       variant="outline"
@@ -743,7 +741,7 @@ export const ToolMessagePart = memo(
                       }
                     >
                       <X />
-                      {t("Common.reject")}
+                      {"reject"}
                     </Button>
                   </div>
                 )}

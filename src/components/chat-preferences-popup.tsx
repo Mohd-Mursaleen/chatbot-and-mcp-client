@@ -19,7 +19,6 @@ import {
 } from "./chat-preferences-content";
 import { UserIcon, X } from "lucide-react";
 import { Button } from "ui/button";
-import { useTranslations } from "next-intl";
 import { MCPIcon } from "ui/mcp-icon";
 
 export function ChatPreferencesPopup() {
@@ -27,16 +26,15 @@ export function ChatPreferencesPopup() {
     useShallow((state) => [state.openChatPreferences, state.mutate]),
   );
 
-  const t = useTranslations();
 
   const tabs = useMemo(() => {
     return [
       {
-        label: t("Chat.ChatPreferences.userInstructions"),
+        label: "Chat.ChatPreferences.userInstructions",
         icon: <UserIcon className="w-4 h-4" />,
       },
       {
-        label: t("Chat.ChatPreferences.mcpInstructions"),
+        label: "Chat.ChatPreferences.mcpInstructions",
         icon: <MCPIcon className="w-4 h-4 fill-muted-foreground" />,
       },
     ];

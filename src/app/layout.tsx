@@ -6,8 +6,6 @@ import {
   ThemeStyleProvider,
 } from "@/components/layouts/theme-provider";
 import { Toaster } from "ui/sonner";
-import { NextIntlClientProvider } from "next-intl";
-import { getLocale } from "next-intl/server";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -25,15 +23,13 @@ export const metadata: Metadata = {
 
 // const themes = BASE_THEMES.flatMap((t) => [t, `${t}-dark`]);
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = await getLocale();
-
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -45,12 +41,10 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <ThemeStyleProvider>
-            <NextIntlClientProvider>
-              <div id="root">
-                {children}
-                <Toaster richColors />
-              </div>
-            </NextIntlClientProvider>
+            <div id="root">
+              {children}
+              <Toaster richColors />
+            </div>
           </ThemeStyleProvider>
         </ThemeProvider>
       </body>

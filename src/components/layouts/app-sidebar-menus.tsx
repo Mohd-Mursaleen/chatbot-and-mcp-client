@@ -8,14 +8,12 @@ import { SidebarGroup } from "ui/sidebar";
 import Link from "next/link";
 import { getShortcutKeyList, Shortcuts } from "lib/keyboard-shortcuts";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
 import { MCPIcon } from "ui/mcp-icon";
 import { WriteIcon } from "ui/write-icon";
 
 
 export function AppSidebarMenus() {
   const router = useRouter();
-  const t = useTranslations("Layout");
   const { setOpenMobile } = useSidebar();
   return (
     <SidebarGroup>
@@ -34,7 +32,7 @@ export function AppSidebarMenus() {
               >
                 <SidebarMenuButton className="flex font-semibold group/new-chat bg-input/20 border border-border/40">
                   <WriteIcon className="size-4" />
-                  {t("newChat")}
+                  {"New Chat"}
                   <div className="flex items-center gap-1 text-xs font-medium ml-auto opacity-0 group-hover/new-chat:opacity-100 transition-opacity">
                     {getShortcutKeyList(Shortcuts.openNewChat).map((key) => (
                       <span
@@ -56,7 +54,7 @@ export function AppSidebarMenus() {
               <Link href="/mcp">
                 <SidebarMenuButton className="font-semibold">
                   <MCPIcon className="size-4 fill-accent-foreground" />
-                  {t("mcpConfiguration")}
+                  {"MCP Configuration"}
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>

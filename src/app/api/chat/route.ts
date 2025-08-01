@@ -18,7 +18,6 @@ import { chatRepository } from "lib/db/repository";
 import globalLogger from "logger";
 import {
   buildMcpServerCustomizationsSystemPrompt,
-  buildProjectInstructionsSystemPrompt,
   buildUserSystemPrompt,
   buildToolCallUnsupportedModelSystemPrompt,
   mentionPrompt,
@@ -71,7 +70,6 @@ export async function POST(request: Request) {
       allowedAppDefaultToolkit,
       autoTitle,
       allowedMcpServers,
-      projectId,
       mentions = [],
     } = chatApiSchemaRequestBodySchema.parse(json);
 
@@ -83,7 +81,6 @@ export async function POST(request: Request) {
       logger.info(`create chat thread: ${id}`);
       const newThread = await chatRepository.insertThread({
         id,
-        projectId: projectId ?? null,
         title: autoTitle
           ? await generateTitleFromUserMessageAction({ message, model })
           : "",
@@ -144,8 +141,6 @@ export async function POST(request: Request) {
           })
           .orElse({});
 
-        const WORKFLOW_TOOLS = {};
-
         const APP_DEFAULT_TOOLS = safe(APP_DEFAULT_TOOL_KIT)
           .map(errorIf(() => !isToolCallAllowed && "Not allowed"))
           .map((tools) => {
@@ -175,7 +170,7 @@ export async function POST(request: Request) {
           const toolResult = await manualToolExecuteByLastMessage(
             inProgressToolStep,
             message,
-            { ...MCP_TOOLS, ...WORKFLOW_TOOLS, ...APP_DEFAULT_TOOLS },
+            { ...MCP_TOOLS, ...APP_DEFAULT_TOOLS },
             request.signal,
           );
           assignToolResult(inProgressToolStep, toolResult);
@@ -200,14 +195,13 @@ export async function POST(request: Request) {
 
         const systemPrompt = mergeSystemPrompt(
           buildUserSystemPrompt(session.user, userPreferences),
-          buildProjectInstructionsSystemPrompt(thread?.instructions),
           buildMcpServerCustomizationsSystemPrompt(mcpServerCustomizations),
           mentions.length > 0 && mentionPrompt,
           isToolCallUnsupportedModel(model) &&
             buildToolCallUnsupportedModelSystemPrompt,
         );
 
-        const vercelAITooles = safe({ ...MCP_TOOLS, ...WORKFLOW_TOOLS })
+        const vercelAITooles = safe({ ...MCP_TOOLS })
           .map((t) => {
             const bindingTools =
               toolChoice === "manual" ? excludeToolExecution(t) : t;

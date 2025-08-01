@@ -22,7 +22,7 @@ import { createPortal } from "react-dom";
 import { appStore } from "@/app/store";
 import { cn, toAny } from "lib/utils";
 import { useShallow } from "zustand/shallow";
-import { Avatar, AvatarFallback, AvatarImage } from "ui/avatar";
+
 import { Editor } from "@tiptap/react";
 import { DefaultToolName } from "lib/ai/tools";
 import { Tooltip, TooltipContent, TooltipTrigger } from "ui/tooltip";
@@ -116,8 +116,8 @@ function ChatMentionInputSuggestion({
   left: number;
 }) {
   const t = useTranslations("Common");
-  const [mcpList, workflowList] = appStore(
-    useShallow((state) => [state.mcpList, state.workflowToolList]),
+  const [mcpList] = appStore(
+    useShallow((state) => [state.mcpList]),
   );
 
   const mcpMentions = useMemo(() => {
@@ -176,42 +176,7 @@ function ChatMentionInputSuggestion({
       });
   }, [mcpList]);
 
-  const workflowMentions = useMemo(() => {
-    if (!workflowList.length) return;
-    return (
-      <CommandGroup heading="Workflows" key="workflows">
-        {workflowList.map((workflow) => {
-          return (
-            <CommandItem
-              key={workflow.id}
-              className="cursor-pointer text-foreground"
-              onSelect={() =>
-                onSelectMention({
-                  label: `tool("${workflow.name}")`,
-                  id: JSON.stringify({
-                    type: "workflow",
-                    name: workflow.name,
-                    workflowId: workflow.id,
-                    icon: workflow.icon,
-                    description: workflow.description,
-                  }),
-                })
-              }
-            >
-              <Avatar
-                style={workflow.icon?.style}
-                className="size-3.5 ring-[1px] ring-input rounded-full"
-              >
-                <AvatarImage src={workflow.icon?.value} />
-                <AvatarFallback>{workflow.name.slice(0, 1)}</AvatarFallback>
-              </Avatar>
-              <span className="truncate min-w-0">{workflow.name}</span>
-            </CommandItem>
-          );
-        })}
-      </CommandGroup>
-    );
-  }, [workflowList]);
+
 
   const defaultToolMentions = useMemo(() => {
     const items = Object.values(DefaultToolName).map((toolName) => {
@@ -293,7 +258,6 @@ function ChatMentionInputSuggestion({
           />
           <CommandList className="p-2">
             <CommandEmpty>{t("noResults")}</CommandEmpty>
-            {workflowMentions}
             {defaultToolMentions}
             {mcpMentions}
           </CommandList>

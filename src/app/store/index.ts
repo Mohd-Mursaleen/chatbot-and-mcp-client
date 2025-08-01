@@ -3,13 +3,11 @@ import { persist } from "zustand/middleware";
 import { ChatMention, ChatModel, ChatThread } from "app-types/chat";
 import { AllowedMCPServer, MCPServerInfo } from "app-types/mcp";
 
-import { WorkflowSummary } from "app-types/workflow";
 import { AppDefaultToolkit } from "lib/ai/tools";
 
 export interface AppState {
   threadList: ChatThread[];
   mcpList: (MCPServerInfo & { id: string })[];
-  workflowToolList: WorkflowSummary[];
   currentThreadId: ChatThread["id"] | null;
   toolChoice: "auto" | "none" | "manual";
   allowedMcpServers?: Record<string, AllowedMCPServer>;
@@ -44,7 +42,6 @@ const initialState: AppState = {
   generatingTitleThreadIds: [],
   threadMentions: {},
   mcpList: [],
-  workflowToolList: [],
   currentThreadId: null,
   toolChoice: "auto",
   allowedMcpServers: undefined,

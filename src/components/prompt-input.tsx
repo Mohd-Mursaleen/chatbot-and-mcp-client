@@ -3,7 +3,6 @@
 import {
   ChevronDown,
   Paperclip,
-  Square,
   XIcon,
 } from "lucide-react";
 import { useCallback, useMemo, useRef } from "react";
@@ -51,16 +50,12 @@ export default function PromptInput({
   setModel,
   input,
   setInput,
-  onStop,
   isLoading,
-  toolDisabled,
-  voiceDisabled,
   threadId,
 }: PromptInputProps) {
   const t = useTranslations("Chat");
 
   const [
-    currentThreadId,
     globalModel,
     threadMentions,
     appStoreMutate,

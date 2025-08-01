@@ -8,7 +8,7 @@ import { SidebarGroup } from "ui/sidebar";
 import Link from "next/link";
 import { getShortcutKeyList, Shortcuts } from "lib/keyboard-shortcuts";
 import { useRouter } from "next/navigation";
-import { MCPIcon } from "ui/mcp-icon";
+
 import { WriteIcon } from "ui/write-icon";
 
 
@@ -49,16 +49,6 @@ export function AppSidebarMenus() {
           </Tooltip>
         </SidebarMenu>
         <SidebarMenu>
-          <Tooltip>
-            <SidebarMenuItem>
-              <Link href="/mcp">
-                <SidebarMenuButton className="font-semibold">
-                  <MCPIcon className="size-4 fill-accent-foreground" />
-                  {"MCP Configuration"}
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          </Tooltip>
         </SidebarMenu>
 
       </SidebarGroupContent>

@@ -21,10 +21,8 @@ import { UserZodSchema } from "app-types/user";
 import { existsByEmailAction } from "@/app/api/auth/actions";
 import { authClient } from "auth/client";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
 
 export default function SignUpPage() {
-  const t = useTranslations();
   const [step, setStep] = useState(1);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -35,9 +33,9 @@ export default function SignUpPage() {
   });
 
   const steps = [
-    t("Auth.SignUp.step1"),
-    t("Auth.SignUp.step2"),
-    t("Auth.SignUp.step3"),
+    "Auth.SignUp.step1",
+    "Auth.SignUp.step2",
+    "Auth.SignUp.step3",
   ];
 
   const safeProcessWithLoading = function <T>(fn: () => Promise<T>) {
@@ -52,14 +50,14 @@ export default function SignUpPage() {
   const successEmailStep = async () => {
     const { success } = UserZodSchema.shape.email.safeParse(formData.email);
     if (!success) {
-      toast.error(t("Auth.SignUp.invalidEmail"));
+      toast.error("Auth.SignUp.invalidEmail");
       return;
     }
     const exists = await safeProcessWithLoading(() =>
       existsByEmailAction(formData.email),
     ).orElse(false);
     if (exists) {
-      toast.error(t("Auth.SignUp.emailAlreadyExists"));
+      toast.error("Auth.SignUp.emailAlreadyExists");
       return;
     }
     setStep(2);
@@ -68,7 +66,7 @@ export default function SignUpPage() {
   const successNameStep = () => {
     const { success } = UserZodSchema.shape.name.safeParse(formData.name);
     if (!success) {
-      toast.error(t("Auth.SignUp.nameRequired"));
+      toast.error("Auth.SignUp.nameRequired");
       return;
     }
     setStep(3);
@@ -79,7 +77,7 @@ export default function SignUpPage() {
       formData.password,
     );
     if (!success) {
-      toast.error(t("Auth.SignUp.passwordRequired"));
+      toast.error("Auth.SignUp.passwordRequired");
       return;
     }
     await safeProcessWithLoading(() =>
@@ -105,13 +103,13 @@ export default function SignUpPage() {
     <div className="animate-in fade-in duration-1000 w-full h-full flex flex-col p-4 md:p-8 justify-center relative">
       <div className="w-full flex justify-end absolute top-0 right-0">
         <Link href="/sign-in">
-          <Button variant="ghost">{t("Auth.SignUp.signIn")}</Button>
+          <Button variant="ghost">{"Auth.SignUp.signIn"}</Button>
         </Link>
       </div>
       <Card className="w-full md:max-w-md bg-background border-none mx-auto gap-0 shadow-none">
         <CardHeader>
           <CardTitle className="text-2xl text-center ">
-            {t("Auth.SignUp.title")}
+            {"Auth.SignUp.title"}
           </CardTitle>
           <CardDescription className="py-12">
             <div className="flex flex-col gap-2">
@@ -213,7 +211,7 @@ export default function SignUpPage() {
                 onClick={backStep}
               >
                 <ChevronLeft className="size-4" />
-                {t("Common.back")}
+                {"back"}
               </Button>
               <Button
                 disabled={isLoading}
@@ -224,7 +222,7 @@ export default function SignUpPage() {
                   if (step === 3) successPasswordStep();
                 }}
               >
-                {step === 3 ? t("Auth.SignUp.createAccount") : t("Common.next")}
+                {step === 3 ? "Auth.SignUp.createAccount" : "next"}
                 {isLoading && <Loader className="size-4 ml-2" />}
               </Button>
             </div>

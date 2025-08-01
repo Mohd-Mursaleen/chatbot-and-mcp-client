@@ -20,10 +20,10 @@ import { authClient } from "auth/client";
 import { toast } from "sonner";
 import { GithubIcon } from "ui/github-icon";
 import { GoogleIcon } from "ui/google-icon";
-import { useTranslations } from "next-intl";
+
 
 export default function SignInPage() {
-  const t = useTranslations("Auth.SignIn");
+
 
   const [loading, setLoading] = useState(false);
 
@@ -54,7 +54,7 @@ export default function SignInPage() {
 
   const googleSignIn = () => {
     if (!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID)
-      return toast.warning(t("oauthClientIdNotSet", { provider: "Google" }));
+      return toast.warning("oauthClientIdNotSet");
     authClient.signIn
       .social({
         provider: "google",
@@ -66,7 +66,7 @@ export default function SignInPage() {
 
   const githubSignIn = () => {
     if (!process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID)
-      return toast.warning(t("oauthClientIdNotSet", { provider: "GitHub" }));
+      return toast.warning("oauthClientIdNotSet");
     authClient.signIn
       .social({
         provider: "github",
@@ -81,10 +81,10 @@ export default function SignInPage() {
       <Card className="w-full md:max-w-md bg-background border-none mx-auto shadow-none animate-in fade-in duration-1000">
         <CardHeader className="my-4">
           <CardTitle className="text-2xl text-center my-1">
-            {t("title")}
+            {"title"}
           </CardTitle>
           <CardDescription className="text-center text-muted-foreground">
-            {t("description")}
+            {"description"}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col">
@@ -129,14 +129,14 @@ export default function SignInPage() {
               {loading ? (
                 <Loader className="size-4 animate-spin ml-1" />
               ) : (
-                t("signIn")
+                "signIn"
               )}
             </Button>
           </div>
           <div className="flex items-center my-4">
             <div className="flex-1 h-px bg-accent"></div>
             <span className="px-4 text-sm text-muted-foreground">
-              {t("orContinueWith")}
+              {"orContinueWith"}
             </span>
             <div className="flex-1 h-px bg-accent"></div>
           </div>
@@ -156,9 +156,9 @@ export default function SignInPage() {
           </div>
 
           <div className="my-8 text-center text-sm text-muted-foreground">
-            {t("noAccount")}
+            {"noAccount"}
             <Link href="/sign-up" className="underline-offset-4 text-primary">
-              {t("signUp")}
+              {"signUp"}
             </Link>
           </div>
         </CardContent>
